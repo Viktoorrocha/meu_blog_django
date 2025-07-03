@@ -1,0 +1,53 @@
+{# blog/templates/blog/post_detail.html #}
+{% extends 'blog/base.html' %} {# Estende o template base #}
+{% load static %} {# Para carregar arquivos estáticos (futuramente) #}
+
+{% block title %}{{ post.title }}{% endblock %}
+
+{% block content %}
+    <article class="blog-post">
+        <h1 class="display-5 fw-bold mb-3">{{ post.title }}</h1>
+        <p class="blog-post-meta text-muted">
+            Publicado em {{ post.publish_date|date:"d M, Y" }} por
+            <a href="#">{{ post.author.username }}</a>
+            {% if post.category %}(Categoria: <a href="#">{{ post.category.name }}</a>){% endif %}
+        </p>
+
+        <div class="blog-post-body">
+            {{ post.body|linebreaksbr }} {# Exibe o corpo com quebras de linha #}
+        </div>
+
+        <hr>
+
+        {# Seção de Comentários #}
+        <div class="comments-section mt-5">
+            <h3>Comentários ({{ comments.count }})</h3> {# 'comments' vem do get_context_data na view #}
+            {% for comment in comments %}
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ comment.name }}</h5>
+                        <h6 class="card-subtitle text-muted mb-2">
+                            em {{ comment.created_at|date:"d M, Y" }} às {{ comment.created_at|time:"H:i" }}
+                        </h6>
+                        <p class="card-text">{{ comment.body|linebreaksbr }}</p>
+                    </div>
+                </div>
+            {% empty %}
+                <p class="alert alert-info">Ainda não há comentários. Seja o primeiro a comentar!</p>
+            {% endfor %}
+
+            {# Futuramente: Formulário de Comentários aqui #}
+            {# <div class="card mt-4"> #}
+            {#     <div class="card-body"> #}
+            {#         <h5 class="card-title">Deixe um comentário</h5> #}
+            {#         <form method="post"> #}
+            {#             {% csrf_token %} #}
+            {#             {{ comment_form.as_p }} #}
+            {#             <button type="submit" class="btn btn-success">Enviar Comentário</button> #}
+            {#         </form> #}
+            {#     </div> #}
+            {# </div> #}
+        </div>
+
+    </article>
+{% endblock %}
