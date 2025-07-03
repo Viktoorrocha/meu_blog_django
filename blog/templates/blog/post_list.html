@@ -1,0 +1,30 @@
+{# blog/templates/blog/post_list.html #}
+{% extends 'blog/base.html' %} {# Estende o template base #}
+{% load static %} {# Para carregar arquivos estáticos (futuramente) #}
+
+{% block title %}Todos os Posts{% endblock %}
+
+{% block content %}
+    <h1 class="mb-4">Últimos Posts</h1>
+
+    {% for post in posts %} {# Itera sobre a variável 'posts' que a view passou #}
+        <div class="card mb-3">
+            <div class="card-body">
+                <h2 class="card-title"><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h2> {# Link para o detalhe #}
+                {# Alternativamente, se não definirmos get_absolute_url: #}
+                {# <h2 class="card-title"><a href="{% url 'blog:post_detail' post.slug %}">{{ post.title }}</a></h2> #}
+
+                <p class="card-subtitle text-muted mb-2">
+                    Publicado em {{ post.publish_date|date:"d M, Y" }} por {{ post.author.username }}
+                    {% if post.category %}(Categoria: <a href="#">{{ post.category.name }}</a>){% endif %}
+                </p>
+                <p class="card-text">{{ post.body|truncatechars:200 }}</p> {# Exibe apenas os primeiros 200 caracteres #}
+                <a href="{% url 'blog:post_detail' post.slug %}" class="btn btn-primary btn-sm">Leia Mais &raquo;</a>
+            </div>
+        </div>
+    {% empty %}
+        <p class="alert alert-info">Nenhum post publicado ainda.</p>
+    {% endfor %}
+
+    {# Futuramente: Paginação aqui #}
+{% endblock %}
